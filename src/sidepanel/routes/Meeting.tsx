@@ -9,6 +9,7 @@ import {
   QuestionsSection,
 } from '../components/StructuredSections';
 import { AskMeeting } from '../components/AskMeeting';
+import { ExportBar } from '../components/ExportBar';
 import { formatDate, formatDuration } from '../../shared/utils/time';
 
 export function Meeting({
@@ -91,6 +92,8 @@ export function Meeting({
       <QuestionsSection items={meeting.questions} />
 
       <AskMeeting meetingId={meeting.id} />
+
+      <ExportBar meeting={meeting} />
 
       <TranscriptView segments={meeting.segments} />
     </section>
