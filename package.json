@@ -14,8 +14,16 @@
     "lint": "tsc -b --noEmit"
   },
   "dependencies": {
+    "@huggingface/transformers": "^3.7.0",
+    "barq-vweb": "^0.1.0",
+    "barq-wasm": "^0.1.0",
+    "html-to-image": "^1.11.13",
+    "idb-keyval": "^6.2.1",
+    "jspdf": "^2.5.2",
+    "onnxruntime-web": "^1.20.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.287",
