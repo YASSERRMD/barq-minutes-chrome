@@ -1,11 +1,188 @@
+import { useEffect, useRef, useState } from 'react';
+import { startMicRecording, type RecorderHandle } from '../../shared/pipeline/recorder';
+import { startLiveTranscriber, type LiveTranscriberHandle } from '../../shared/pipeline/liveTranscribe';
+import { ensureSessions } from '../../shared/models/sessions';
+import { createMeeting, updateMeeting } from '../../shared/storage/meetings';
+import { finalizeRecording } from '../../shared/pipeline/finalize';
+import { processMeeting } from '../../shared/pipeline/processMeeting';
+import { indexMeetingForRag } from '../../shared/pipeline/ragIndex';
+import { getMeeting } from '../../shared/storage/meetings';
+import { Waveform } from '../components/Waveform';
+import { ProcessingStates } from '../components/ProcessingStates';
+import { ModelStatus } from '../components/ModelStatus';
+import type { ProcessingStatus, TranscriptSegment } from '../../shared/schemas/meeting';
+import { formatDuration } from '../../shared/utils/time';
+
 export function Record({ onMeetingCreated }: { onMeetingCreated: (id: string) => void }) {
+  const [phase, setPhase] = useState<'idle' | 'recording' | 'finalizing' | 'processing' | 'done' | 'error'>('idle');
+  const [title, setTitle] = useState('');
+  const [storeAudio, setStoreAudio] = useState(false);
+  const [level, setLevel] = useState(0);
+  const [elapsedMs, setElapsedMs] = useState(0);
+  const [segments, setSegments] = useState<TranscriptSegment[]>([]);
+  const [meetingId, setMeetingId] = useState<string | null>(null);
+  const [status, setStatus] = useState<ProcessingStatus>('idle');
+  const [error, setError] = useState<string | null>(null);
+
+  const recorderRef = useRef<RecorderHandle | null>(null);
+  const transcriberRef = useRef<LiveTranscriberHandle | null>(null);
+  const startedAtRef = useRef<number>(0);
+  const tickRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (tickRef.current) clearInterval(tickRef.current);
+      transcriberRef.current?.stop();
+    };
+  }, []);
+
+  const startRecording = async () => {
+    setError(null);
+    setPhase('recording');
+    setStatus('preparing-models');
+    try {
+      await ensureSessions(['asr']);
+      const meeting = await createMeeting({ source: 'record', title: title || 'Untitled meeting', storeAudio });
+      setMeetingId(meeting.id);
+      await updateMeeting(meeting.id, (m) => ({ ...m, status: 'transcribing' }));
+      setStatus('transcribing');
+
+      const transcriber = startLiveTranscriber({
+        onSegment: (seg) => setSegments((prev) => [...prev, seg]),
+        onError: (err) => setError(err.message),
+      });
+      transcriberRef.current = transcriber;
+
+      const handle = await startMicRecording({
+        onChunk: (chunk) => transcriber.pushChunk(chunk),
+        onLevel: (rms) => setLevel(rms),
+        onError: (err) => setError(err.message),
+      });
+      recorderRef.current = handle;
+      startedAtRef.current = performance.now();
+      tickRef.current = window.setInterval(() => {
+        setElapsedMs(performance.now() - startedAtRef.current);
+      }, 250);
+    } catch (err) {
+      setPhase('error');
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  };
+
+  const stopRecording = async () => {
+    if (!recorderRef.current || !meetingId) return;
+    setPhase('finalizing');
+    if (tickRef.current) clearInterval(tickRef.current);
+    try {
+      const stopped = await recorderRef.current.stop();
+      const transcriber = transcriberRef.current;
+      if (transcriber) await transcriber.flushFinal(stopped.durationMs);
+
+      await finalizeRecording({
+        meetingId,
+        fullBlob: stopped.blob,
+        durationMs: stopped.durationMs,
+        storeAudio,
+        alreadyTranscribed: segments,
+      });
+
+      setPhase('processing');
+      await ensureSessions(['llm', 'embedding']);
+      await processMeeting({
+        meetingId,
+        onProgress: (p) => setStatus(p.status),
+      });
+      const m = await getMeeting(meetingId);
+      if (m) {
+        setStatus('indexing');
+        await indexMeetingForRag(meetingId, m.segments);
+        setStatus('ready');
+      }
+      setPhase('done');
+      onMeetingCreated(meetingId);
+    } catch (err) {
+      setPhase('error');
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      transcriberRef.current?.stop();
+      transcriberRef.current = null;
+      recorderRef.current = null;
+    }
+  };
+
+  const isRecording = phase === 'recording';
+  const isWorking = phase === 'finalizing' || phase === 'processing';
+
   return (
     <section className="route">
       <header className="route-header">
         <h2>Record meeting</h2>
       </header>
-      <p className="muted">Recording UI will be wired in a later phase.</p>
-      <button type="button" className="hidden" onClick={() => onMeetingCreated('placeholder')} aria-hidden="true" />
+
+      <ModelStatus />
+
+      <div className="card">
+        <div className="field">
+          <label htmlFor="title">Title</label>
+          <input
+            id="title"
+            className="input"
+            value={title}
+            disabled={isRecording || isWorking}
+            placeholder="Weekly product sync"
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </div>
+        <div className="row" style={{ gap: 8, marginBottom: 12 }}>
+          <input
+            id="store-audio"
+            type="checkbox"
+            checked={storeAudio}
+            disabled={isRecording || isWorking}
+            onChange={(e) => setStoreAudio(e.target.checked)}
+          />
+          <label htmlFor="store-audio">Store audio in browser (off by default)</label>
+        </div>
+        <Waveform level={level} recording={isRecording} />
+        <div className="row between" style={{ marginTop: 12 }}>
+          <span className="muted">{formatDuration(elapsedMs)}</span>
+          {!isRecording && phase !== 'finalizing' && phase !== 'processing' ? (
+            <button type="button" className="primary-button" onClick={startRecording}>
+              Start recording
+            </button>
+          ) : (
+            <button type="button" className="ghost-button" onClick={stopRecording} disabled={isWorking}>
+              {isWorking ? 'Working...' : 'Stop and process'}
+            </button>
+          )}
+        </div>
+        {error && (
+          <p className="muted" style={{ color: '#b3261e', marginTop: 8 }}>
+            {error}
+          </p>
+        )}
+      </div>
+
+      {(isRecording || isWorking || phase === 'done') && (
+        <ProcessingStates status={status} />
+      )}
+
+      {segments.length > 0 && (
+        <div className="card">
+          <h3>Live transcript</h3>
+          <div className="stack" style={{ maxHeight: 240, overflowY: 'auto' }}>
+            {segments.map((s) => (
+              <div key={s.id} className="row" style={{ alignItems: 'flex-start' }}>
+                <span className="tag" style={{ minWidth: 56, textAlign: 'center' }}>
+                  {formatDuration(s.start)}
+                </span>
+                <span style={{ marginLeft: 8 }}>{s.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
+
