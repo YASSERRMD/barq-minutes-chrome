@@ -192,3 +192,140 @@ p {
   margin-bottom: 16px;
   background: var(--bm-surface);
 }
+
+.card {
+  border: 1px solid var(--bm-border);
+  border-radius: var(--bm-radius);
+  padding: 14px;
+  background: #fff;
+  box-shadow: var(--bm-shadow);
+}
+
+.card + .card {
+  margin-top: 12px;
+}
+
+.list-row {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  border-bottom: 1px solid var(--bm-border);
+  cursor: pointer;
+}
+
+.list-row:hover {
+  background: var(--bm-surface);
+}
+
+.list-row .title {
+  font-weight: 600;
+  color: var(--bm-text);
+}
+
+.list-row .meta {
+  color: var(--bm-text-muted);
+  font-size: 12px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--bm-surface);
+  color: var(--bm-text-muted);
+  border: 1px solid var(--bm-border);
+}
+
+.tag.accent {
+  background: rgba(201, 162, 39, 0.12);
+  color: #7a601a;
+  border-color: rgba(201, 162, 39, 0.4);
+}
+
+.tag.live {
+  background: rgba(10, 31, 68, 0.06);
+  color: var(--bm-primary);
+  border-color: rgba(10, 31, 68, 0.2);
+}
+
+.divider {
+  height: 1px;
+  background: var(--bm-border);
+  margin: 12px 0;
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--bm-border);
+  border-radius: var(--bm-radius-sm);
+  background: #fff;
+  color: var(--bm-text);
+  font: inherit;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--bm-primary);
+  box-shadow: 0 0 0 3px rgba(10, 31, 68, 0.1);
+}
+
+.textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--bm-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: var(--bm-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--bm-primary);
+  transition: width 200ms ease;
+}
+
+.progress-bar.accent {
+  background: var(--bm-accent);
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.row.between {
+  justify-content: space-between;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
