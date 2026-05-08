@@ -53,6 +53,40 @@ Approximate sizes:
 
 If you do not want to download these, the extension will still run UI-only.
 
+## Architecture
+
+```
++-----------------------------------------------------------+
+|                       Chrome browser                      |
+|                                                           |
+|  +--------------------+      +-----------------------+    |
+|  |  Side panel (UI)   |<---->|  Background worker    |    |
+|  |  React 19 + TS     |      |  (Manifest V3)        |    |
+|  +---------+----------+      +-----------------------+    |
+|            |                                              |
+|            v                                              |
+|  +--------------------+    +-----------------------+      |
+|  |  Pipeline runtime  |--->|  Local model sessions |      |
+|  |  Recording, ASR    |    |  - Whisper (WebGPU)   |      |
+|  |  Extraction loop   |    |  - GLM5.1 distill Q4  |      |
+|  |  Dedupe + summary  |    |  - MiniLM embeddings  |      |
+|  |  RAG retrieval     |    +-----------+-----------+      |
+|  +---------+----------+                |                  |
+|            |                            v                 |
+|            v                  +---------------------+     |
+|  +--------------------+       |  Browser model      |     |
+|  |   IndexedDB        |       |  cache (HF assets)  |     |
+|  |   meetings         |       +---------------------+     |
+|  |   audio (opt-in)   |                                   |
+|  |   vectors (RAG)    |                                   |
+|  |   settings         |                                   |
+|  +--------------------+                                   |
++-----------------------------------------------------------+
+
+External network: only Hugging Face on first model download.
+After that, all processing is local.
+```
+
 ## Permissions
 
 | Permission | Why |
