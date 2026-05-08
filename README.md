@@ -98,6 +98,16 @@ After that, all processing is local.
 | `activeTab` (optional) | Optional context for the current tab |
 | Hugging Face host permissions | First-time model download only |
 
+## Local model inference
+
+Barq Minutes runs every model in your browser tab. There is no remote inference, no API key, and no cloud cost.
+
+- **ASR.** Audio is decoded to mono 16 kHz PCM in the browser using the Web Audio API. The PCM is fed to Whisper running through `@huggingface/transformers`. WebGPU is used when available, otherwise the WASM backend runs.
+- **LLM.** GLM5.1 distill is loaded as ONNX Q4 with `@huggingface/transformers`. The transcript is never sent to the model in one call. It is split into ~6,000 character windows with 600 character overlap, and each window is processed three times: extract decisions, extract action items, extract open questions. JSON output is parsed and validated with zod, with one strict retry on malformed output. The summary is built in two passes: a short summary per window, then a final 3 to 6 bullet executive summary made from those chunk summaries.
+- **Embeddings.** MiniLM L6 v2 embeds extracted items for deduplication and embeds RAG transcript chunks for retrieval. Cosine similarity above 0.85 collapses duplicate items into one canonical entry.
+- **Retrieval.** Q&A retrieves the top 5 transcript chunks for a question and only those chunks are passed to the LLM. The retrieved chunks are also displayed with timestamps so you can verify the answer.
+- **Singletons.** Each model is loaded once per tab and reused. The cache is keyed in IndexedDB so the UI can show "Loading from cache" instead of "Downloading" on subsequent loads.
+
 ## Privacy
 
 See [PRIVACY.md](./PRIVACY.md) for the full data flow.
