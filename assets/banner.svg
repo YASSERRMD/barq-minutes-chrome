@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" role="img" aria-label="Barq Minutes for Chrome">
+  <title>Barq Minutes for Chrome</title>
+  <defs>
+    <linearGradient id="navyGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1B2A4A"/>
+      <stop offset="60%" stop-color="#162342"/>
+      <stop offset="100%" stop-color="#0F1B33"/>
+    </linearGradient>
+    <linearGradient id="goldGradient" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#A48739"/>
+      <stop offset="50%" stop-color="#C5A55A"/>
+      <stop offset="100%" stop-color="#E6C580"/>
+    </linearGradient>
+    <linearGradient id="logoNavy" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#22335B"/>
+      <stop offset="100%" stop-color="#0F1B33"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#C5A55A" stroke-width="0.4" opacity="0.18"/>
+    </pattern>
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="360" fill="url(#navyGradient)"/>
+  <rect width="1280" height="360" fill="url(#grid)"/>
+
+  <!-- Outer brand frame -->
+  <rect x="20" y="20" width="1240" height="320" fill="none" stroke="#C5A55A" stroke-width="1.2" opacity="0.55"/>
+  <rect x="28" y="28" width="1224" height="304" fill="none" stroke="#C5A55A" stroke-width="0.4" opacity="0.35"/>
+
+  <!-- Top-centre pendant accent -->
+  <rect x="624" y="20" width="32" height="22" fill="#1B2A4A" stroke="#C5A55A" stroke-width="0.8"/>
+  <line x1="640" y1="24" x2="640" y2="38" stroke="#C5A55A" stroke-width="1"/>
+
+  <!-- ============================================== -->
+  <!-- MY diamond logo (left side)                    -->
+  <!-- ============================================== -->
+  <g transform="translate(110,180)">
+    <!-- Diamond outer frame -->
+    <g transform="rotate(45)">
+      <rect x="-90" y="-90" width="180" height="180" fill="url(#logoNavy)" stroke="#C5A55A" stroke-width="2"/>
+      <rect x="-78" y="-78" width="156" height="156" fill="none" stroke="#C5A55A" stroke-width="0.6" opacity="0.7"/>
+    </g>
+    <!-- M letter (navy on light tile) -->
+    <g transform="translate(-44,-6)">
+      <path d="M 0 36 L 0 -28 L 14 -28 L 26 0 L 38 -28 L 52 -28 L 52 36 L 40 36 L 40 -10 L 30 14 L 22 14 L 12 -10 L 12 36 Z"
+            fill="#FFFFFF"/>
+    </g>
+    <!-- Y letter (gold accent) -->
+    <g transform="translate(14,8)">
+      <path d="M 0 -22 L 14 0 L 14 32 L 26 32 L 26 0 L 40 -22 L 26 -22 L 20 -10 L 14 -22 Z"
+            fill="#C5A55A"/>
+    </g>
+    <!-- Bottom gold dot -->
+    <circle cx="0" cy="118" r="3" fill="#C5A55A"/>
+  </g>
+
+  <!-- ============================================== -->
+  <!-- Title block (centre / right)                   -->
+  <!-- ============================================== -->
+  <!-- Letter-spaced eyebrow -->
+  <text x="280" y="98"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="13"
+        letter-spacing="6"
+        fill="#C5A55A"
+        font-weight="600">M O H A M E D   Y A S S E R</text>
+
+  <!-- Thin gold bar under eyebrow -->
+  <line x1="280" y1="112" x2="380" y2="112" stroke="#C5A55A" stroke-width="1.4"/>
+  <circle cx="386" cy="112" r="2" fill="#C5A55A"/>
+
+  <!-- Project title -->
+  <text x="280" y="170"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="56"
+        fill="#FFFFFF"
+        font-weight="700"
+        letter-spacing="0.5">Barq <tspan fill="#C5A55A">Minutes</tspan></text>
+
+  <text x="280" y="208"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="22"
+        fill="#E6E8EE"
+        font-weight="400"
+        letter-spacing="2.5">for Chrome  ·  v0.1.0</text>
+
+  <!-- Tagline -->
+  <text x="280" y="244"
+        font-family="Calibri, Arial, sans-serif"
+        font-size="16"
+        fill="#C7CDDB"
+        letter-spacing="0.6">Local-only meeting transcription, summary, decisions, and Q&amp;A.</text>
+  <text x="280" y="266"
+        font-family="Calibri, Arial, sans-serif"
+        font-size="16"
+        fill="#C7CDDB"
+        letter-spacing="0.6">No backend. No telemetry. No cloud inference.</text>
+
+  <!-- Pill row -->
+  <g font-family="Calibri, Arial, sans-serif" font-size="11" fill="#E6E8EE" letter-spacing="1.2">
+    <g transform="translate(280,294)">
+      <rect x="0" y="0" width="118" height="22" rx="11" fill="#1B2A4A" stroke="#C5A55A" stroke-width="0.8"/>
+      <text x="59" y="15" text-anchor="middle">MANIFEST V3</text>
+    </g>
+    <g transform="translate(406,294)">
+      <rect x="0" y="0" width="118" height="22" rx="11" fill="#1B2A4A" stroke="#C5A55A" stroke-width="0.8"/>
+      <text x="59" y="15" text-anchor="middle">WHISPER WEBGPU</text>
+    </g>
+    <g transform="translate(532,294)">
+      <rect x="0" y="0" width="118" height="22" rx="11" fill="#1B2A4A" stroke="#C5A55A" stroke-width="0.8"/>
+      <text x="59" y="15" text-anchor="middle">GLM5.1 ONNX Q4</text>
+    </g>
+    <g transform="translate(658,294)">
+      <rect x="0" y="0" width="118" height="22" rx="11" fill="#1B2A4A" stroke="#C5A55A" stroke-width="0.8"/>
+      <text x="59" y="15" text-anchor="middle">RAG · MINILM</text>
+    </g>
+  </g>
+
+  <!-- ============================================== -->
+  <!-- Right-side wireframe decoration                -->
+  <!-- ============================================== -->
+  <g transform="translate(900,70)" stroke="#C5A55A" fill="none" stroke-width="0.7" opacity="0.55">
+    <!-- Browser window outline -->
+    <rect x="0" y="0" width="320" height="220" rx="6"/>
+    <line x1="0" y1="32" x2="320" y2="32"/>
+    <circle cx="14" cy="16" r="3"/>
+    <circle cx="28" cy="16" r="3"/>
+    <circle cx="42" cy="16" r="3"/>
+    <!-- Side panel -->
+    <line x1="210" y1="32" x2="210" y2="220"/>
+    <!-- Side panel content lines -->
+    <rect x="222" y="46" width="84" height="14" rx="2"/>
+    <rect x="222" y="70" width="84" height="6" rx="2"/>
+    <rect x="222" y="82" width="74" height="6" rx="2"/>
+    <line x1="222" y1="106" x2="306" y2="106" stroke-dasharray="2 3"/>
+    <rect x="222" y="116" width="84" height="6" rx="2"/>
+    <rect x="222" y="128" width="64" height="6" rx="2"/>
+    <line x1="222" y1="152" x2="306" y2="152" stroke-dasharray="2 3"/>
+    <rect x="222" y="162" width="84" height="6" rx="2"/>
+    <rect x="222" y="174" width="50" height="6" rx="2"/>
+    <!-- Waveform inside main area -->
+    <g transform="translate(20,140)" opacity="0.85">
+      <line x1="0" y1="0" x2="0" y2="-12"/>
+      <line x1="6" y1="0" x2="6" y2="-22"/>
+      <line x1="12" y1="0" x2="12" y2="-8"/>
+      <line x1="18" y1="0" x2="18" y2="-30"/>
+      <line x1="24" y1="0" x2="24" y2="-14"/>
+      <line x1="30" y1="0" x2="30" y2="-26"/>
+      <line x1="36" y1="0" x2="36" y2="-10"/>
+      <line x1="42" y1="0" x2="42" y2="-34"/>
+      <line x1="48" y1="0" x2="48" y2="-20"/>
+      <line x1="54" y1="0" x2="54" y2="-12"/>
+      <line x1="60" y1="0" x2="60" y2="-28"/>
+      <line x1="66" y1="0" x2="66" y2="-8"/>
+      <line x1="72" y1="0" x2="72" y2="-22"/>
+      <line x1="78" y1="0" x2="78" y2="-34"/>
+      <line x1="84" y1="0" x2="84" y2="-18"/>
+      <line x1="90" y1="0" x2="90" y2="-10"/>
+      <line x1="96" y1="0" x2="96" y2="-26"/>
+      <line x1="102" y1="0" x2="102" y2="-14"/>
+      <line x1="108" y1="0" x2="108" y2="-22"/>
+      <line x1="114" y1="0" x2="114" y2="-30"/>
+      <line x1="120" y1="0" x2="120" y2="-12"/>
+      <line x1="126" y1="0" x2="126" y2="-26"/>
+      <line x1="132" y1="0" x2="132" y2="-8"/>
+      <line x1="138" y1="0" x2="138" y2="-30"/>
+      <line x1="144" y1="0" x2="144" y2="-16"/>
+      <line x1="150" y1="0" x2="150" y2="-22"/>
+      <line x1="156" y1="0" x2="156" y2="-10"/>
+      <line x1="162" y1="0" x2="162" y2="-32"/>
+      <line x1="168" y1="0" x2="168" y2="-14"/>
+      <line x1="174" y1="0" x2="174" y2="-26"/>
+    </g>
+    <!-- Transcript pseudo-lines -->
+    <g transform="translate(20,170)">
+      <rect x="0" y="0" width="170" height="6" rx="2"/>
+      <rect x="0" y="12" width="140" height="6" rx="2"/>
+      <rect x="0" y="24" width="160" height="6" rx="2"/>
+      <rect x="0" y="36" width="120" height="6" rx="2"/>
+    </g>
+  </g>
+
+  <!-- ============================================== -->
+  <!-- Footer strip                                   -->
+  <!-- ============================================== -->
+  <line x1="40" y1="318" x2="1240" y2="318" stroke="#C5A55A" stroke-width="0.5" opacity="0.5"/>
+
+  <text x="40" y="338"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="11"
+        fill="#C5A55A"
+        font-weight="700"
+        letter-spacing="3">MY</text>
+  <line x1="68" y1="324" x2="68" y2="342" stroke="#C5A55A" stroke-width="0.8"/>
+  <text x="80" y="338"
+        font-family="Calibri, Arial, sans-serif"
+        font-size="10"
+        fill="#A8B0C2"
+        letter-spacing="3">MOHAMED YASSER  ·  SOLUTIONS ARCHITECT</text>
+
+  <text x="1240" y="338"
+        text-anchor="end"
+        font-family="Calibri, Arial, sans-serif"
+        font-size="10"
+        fill="#C5A55A"
+        font-weight="700"
+        letter-spacing="3">APACHE 2.0  ·  CHROME 121+</text>
+</svg>
