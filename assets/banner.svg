@@ -1,213 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" role="img" aria-label="Barq Minutes for Chrome">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" role="img" aria-label="Barq Minutes for Chrome repository banner">
   <title>Barq Minutes for Chrome</title>
   <defs>
-    <linearGradient id="navyGradient" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#1B2A4A"/>
-      <stop offset="60%" stop-color="#162342"/>
-      <stop offset="100%" stop-color="#0F1B33"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1B2A4A"/>
+      <stop offset="0.52" stop-color="#172642"/>
+      <stop offset="1" stop-color="#0F1B33"/>
     </linearGradient>
-    <linearGradient id="goldGradient" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#A48739"/>
-      <stop offset="50%" stop-color="#C5A55A"/>
-      <stop offset="100%" stop-color="#E6C580"/>
+    <linearGradient id="diamondFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22355D"/>
+      <stop offset="1" stop-color="#0F1B33"/>
     </linearGradient>
-    <linearGradient id="logoNavy" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#22335B"/>
-      <stop offset="100%" stop-color="#0F1B33"/>
+    <linearGradient id="logoShine" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.14"/>
+      <stop offset="0.46" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="1" stop-color="#C5A55A" stop-opacity="0.10"/>
     </linearGradient>
-    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#C5A55A" stroke-width="0.4" opacity="0.18"/>
+    <pattern id="goldGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 H 0 V 40" fill="none" stroke="#C5A55A" stroke-width="0.4" opacity="0.18"/>
     </pattern>
-    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
-    </filter>
+    <clipPath id="diamondClip">
+      <rect x="-64" y="-64" width="128" height="128" transform="rotate(45)"/>
+    </clipPath>
   </defs>
 
-  <!-- Background -->
-  <rect width="1280" height="360" fill="url(#navyGradient)"/>
-  <rect width="1280" height="360" fill="url(#grid)"/>
+  <rect width="1280" height="360" fill="url(#bg)"/>
+  <rect width="1280" height="360" fill="url(#goldGrid)"/>
 
-  <!-- Outer brand frame -->
   <rect x="20" y="20" width="1240" height="320" fill="none" stroke="#C5A55A" stroke-width="1.2" opacity="0.55"/>
   <rect x="28" y="28" width="1224" height="304" fill="none" stroke="#C5A55A" stroke-width="0.4" opacity="0.35"/>
 
-  <!-- Top-centre pendant accent -->
-  <rect x="624" y="20" width="32" height="22" fill="#1B2A4A" stroke="#C5A55A" stroke-width="0.8"/>
-  <line x1="640" y1="24" x2="640" y2="38" stroke="#C5A55A" stroke-width="1"/>
+  <path d="M624 20 H656 V42 H624 Z" fill="#1B2A4A" stroke="#C5A55A" stroke-width="0.8" opacity="0.96"/>
+  <line x1="640" y1="25" x2="640" y2="38" stroke="#C5A55A" stroke-width="1.2" stroke-linecap="round"/>
 
-  <!-- ============================================== -->
-  <!-- MY diamond logo (left side)                    -->
-  <!-- ============================================== -->
-  <g transform="translate(110,180)">
-    <!-- Diamond outer frame -->
-    <g transform="rotate(45)">
-      <rect x="-90" y="-90" width="180" height="180" fill="url(#logoNavy)" stroke="#C5A55A" stroke-width="2"/>
-      <rect x="-78" y="-78" width="156" height="156" fill="none" stroke="#C5A55A" stroke-width="0.6" opacity="0.7"/>
+  <g transform="translate(116 180)">
+    <rect x="-64" y="-64" width="128" height="128" transform="rotate(45)" fill="url(#diamondFill)" stroke="#C5A55A" stroke-width="2"/>
+    <rect x="-54" y="-54" width="108" height="108" transform="rotate(45)" fill="none" stroke="#C5A55A" stroke-width="0.75" opacity="0.78"/>
+    <g clip-path="url(#diamondClip)">
+      <path d="M-90 -16 C-48 -48 14 -56 90 -34 V-90 H-90 Z" fill="url(#logoShine)"/>
+      <path d="M-90 58 C-32 44 34 44 90 18 V90 H-90 Z" fill="#0F1B33" opacity="0.16"/>
     </g>
-    <!-- M letter (navy on light tile) -->
-    <g transform="translate(-44,-6)">
-      <path d="M 0 36 L 0 -28 L 14 -28 L 26 0 L 38 -28 L 52 -28 L 52 36 L 40 36 L 40 -10 L 30 14 L 22 14 L 12 -10 L 12 36 Z"
-            fill="#FFFFFF"/>
+    <g font-family="Georgia, 'Times New Roman', serif" font-weight="700" dominant-baseline="alphabetic">
+      <text x="-45" y="26" font-size="64" fill="#FFFFFF" letter-spacing="-3">M</text>
+      <text x="8" y="26" font-size="64" fill="#C5A55A" letter-spacing="-2">Y</text>
     </g>
-    <!-- Y letter (gold accent) -->
-    <g transform="translate(14,8)">
-      <path d="M 0 -22 L 14 0 L 14 32 L 26 32 L 26 0 L 40 -22 L 26 -22 L 20 -10 L 14 -22 Z"
-            fill="#C5A55A"/>
-    </g>
-    <!-- Bottom gold dot -->
-    <circle cx="0" cy="118" r="3" fill="#C5A55A"/>
+    <path d="M-36 38 H36" stroke="#C5A55A" stroke-width="1" opacity="0.45"/>
+    <circle cx="0" cy="101" r="3.6" fill="#C5A55A"/>
   </g>
 
-  <!-- ============================================== -->
-  <!-- Title block (centre / right)                   -->
-  <!-- ============================================== -->
-  <!-- Letter-spaced eyebrow -->
-  <text x="280" y="98"
-        font-family="Georgia, 'Times New Roman', serif"
-        font-size="13"
-        letter-spacing="6"
-        fill="#C5A55A"
-        font-weight="600">M O H A M E D   Y A S S E R</text>
+  <g transform="translate(280 0)">
+    <text x="0" y="98" font-family="Georgia, 'Times New Roman', serif" font-size="13" font-weight="600" letter-spacing="6" fill="#C5A55A">M O H A M E D   Y A S S E R</text>
+    <line x1="0" y1="112" x2="100" y2="112" stroke="#C5A55A" stroke-width="1.4" stroke-linecap="round"/>
+    <circle cx="108" cy="112" r="2.4" fill="#C5A55A"/>
 
-  <!-- Thin gold bar under eyebrow -->
-  <line x1="280" y1="112" x2="380" y2="112" stroke="#C5A55A" stroke-width="1.4"/>
-  <circle cx="386" cy="112" r="2" fill="#C5A55A"/>
+    <text x="0" y="170" font-family="Georgia, 'Times New Roman', serif" font-size="56" font-weight="700" letter-spacing="0.5" fill="#FFFFFF">Barq <tspan fill="#C5A55A">Minutes</tspan></text>
+    <text x="0" y="208" font-family="Georgia, 'Times New Roman', serif" font-size="22" letter-spacing="2.5" fill="#E6E8EE">for Chrome  ·  v0.1.0</text>
 
-  <!-- Project title -->
-  <text x="280" y="170"
-        font-family="Georgia, 'Times New Roman', serif"
-        font-size="56"
-        fill="#FFFFFF"
-        font-weight="700"
-        letter-spacing="0.5">Barq <tspan fill="#C5A55A">Minutes</tspan></text>
+    <text x="0" y="244" font-family="Calibri, Arial, sans-serif" font-size="16" fill="#C7CDDB">Local-only meeting transcription, summary, decisions, and Q&amp;A.</text>
+    <text x="0" y="266" font-family="Calibri, Arial, sans-serif" font-size="16" fill="#C7CDDB">No backend. No telemetry. No cloud inference.</text>
 
-  <text x="280" y="208"
-        font-family="Georgia, 'Times New Roman', serif"
-        font-size="22"
-        fill="#E6E8EE"
-        font-weight="400"
-        letter-spacing="2.5">for Chrome  ·  v0.1.0</text>
-
-  <!-- Tagline -->
-  <text x="280" y="244"
-        font-family="Calibri, Arial, sans-serif"
-        font-size="16"
-        fill="#C7CDDB"
-        letter-spacing="0.6">Local-only meeting transcription, summary, decisions, and Q&amp;A.</text>
-  <text x="280" y="266"
-        font-family="Calibri, Arial, sans-serif"
-        font-size="16"
-        fill="#C7CDDB"
-        letter-spacing="0.6">No backend. No telemetry. No cloud inference.</text>
-
-  <!-- Pill row -->
-  <g font-family="Calibri, Arial, sans-serif" font-size="11" fill="#E6E8EE" letter-spacing="1.2">
-    <g transform="translate(280,294)">
-      <rect x="0" y="0" width="118" height="22" rx="11" fill="#1B2A4A" stroke="#C5A55A" stroke-width="0.8"/>
-      <text x="59" y="15" text-anchor="middle">MANIFEST V3</text>
-    </g>
-    <g transform="translate(406,294)">
-      <rect x="0" y="0" width="118" height="22" rx="11" fill="#1B2A4A" stroke="#C5A55A" stroke-width="0.8"/>
-      <text x="59" y="15" text-anchor="middle">WHISPER WEBGPU</text>
-    </g>
-    <g transform="translate(532,294)">
-      <rect x="0" y="0" width="118" height="22" rx="11" fill="#1B2A4A" stroke="#C5A55A" stroke-width="0.8"/>
-      <text x="59" y="15" text-anchor="middle">GLM5.1 ONNX Q4</text>
-    </g>
-    <g transform="translate(658,294)">
-      <rect x="0" y="0" width="118" height="22" rx="11" fill="#1B2A4A" stroke="#C5A55A" stroke-width="0.8"/>
-      <text x="59" y="15" text-anchor="middle">RAG · MINILM</text>
+    <g transform="translate(0 294)" font-family="Calibri, Arial, sans-serif" font-size="11" letter-spacing="1.2" fill="#FFFFFF">
+      <g>
+        <rect x="0" y="0" width="118" height="22" rx="11" fill="#1B2A4A" stroke="#C5A55A" stroke-width="0.8"/>
+        <text x="59" y="15" text-anchor="middle">MANIFEST V3</text>
+      </g>
+      <g transform="translate(126 0)">
+        <rect x="0" y="0" width="118" height="22" rx="11" fill="#1B2A4A" stroke="#C5A55A" stroke-width="0.8"/>
+        <text x="59" y="15" text-anchor="middle">WHISPER WEBGPU</text>
+      </g>
+      <g transform="translate(252 0)">
+        <rect x="0" y="0" width="118" height="22" rx="11" fill="#1B2A4A" stroke="#C5A55A" stroke-width="0.8"/>
+        <text x="59" y="15" text-anchor="middle">GLM5.1 ONNX Q4</text>
+      </g>
+      <g transform="translate(378 0)">
+        <rect x="0" y="0" width="118" height="22" rx="11" fill="#1B2A4A" stroke="#C5A55A" stroke-width="0.8"/>
+        <text x="59" y="15" text-anchor="middle">RAG · MINILM</text>
+      </g>
     </g>
   </g>
 
-  <!-- ============================================== -->
-  <!-- Right-side wireframe decoration                -->
-  <!-- ============================================== -->
-  <g transform="translate(900,70)" stroke="#C5A55A" fill="none" stroke-width="0.7" opacity="0.55">
-    <!-- Browser window outline -->
-    <rect x="0" y="0" width="320" height="220" rx="6"/>
+  <g transform="translate(900 70)" stroke="#C5A55A" fill="none" stroke-width="0.85" stroke-linecap="round" stroke-linejoin="round" opacity="0.55">
+    <rect x="0" y="0" width="320" height="220" rx="7"/>
     <line x1="0" y1="32" x2="320" y2="32"/>
-    <circle cx="14" cy="16" r="3"/>
-    <circle cx="28" cy="16" r="3"/>
-    <circle cx="42" cy="16" r="3"/>
-    <!-- Side panel -->
+    <circle cx="15" cy="16" r="3.2" fill="#C5A55A" fill-opacity="0.20"/>
+    <circle cx="30" cy="16" r="3.2" fill="#C5A55A" fill-opacity="0.20"/>
+    <circle cx="45" cy="16" r="3.2" fill="#C5A55A" fill-opacity="0.20"/>
     <line x1="210" y1="32" x2="210" y2="220"/>
-    <!-- Side panel content lines -->
-    <rect x="222" y="46" width="84" height="14" rx="2"/>
-    <rect x="222" y="70" width="84" height="6" rx="2"/>
-    <rect x="222" y="82" width="74" height="6" rx="2"/>
-    <line x1="222" y1="106" x2="306" y2="106" stroke-dasharray="2 3"/>
-    <rect x="222" y="116" width="84" height="6" rx="2"/>
-    <rect x="222" y="128" width="64" height="6" rx="2"/>
-    <line x1="222" y1="152" x2="306" y2="152" stroke-dasharray="2 3"/>
-    <rect x="222" y="162" width="84" height="6" rx="2"/>
-    <rect x="222" y="174" width="50" height="6" rx="2"/>
-    <!-- Waveform inside main area -->
-    <g transform="translate(20,140)" opacity="0.85">
+
+    <rect x="222" y="47" width="84" height="14" rx="3"/>
+    <rect x="222" y="72" width="84" height="7" rx="3"/>
+    <rect x="222" y="86" width="68" height="7" rx="3"/>
+    <line x1="222" y1="107" x2="306" y2="107" stroke-dasharray="1 5"/>
+    <rect x="222" y="119" width="84" height="7" rx="3"/>
+    <rect x="222" y="133" width="58" height="7" rx="3"/>
+    <line x1="222" y1="154" x2="306" y2="154" stroke-dasharray="1 5"/>
+    <rect x="222" y="166" width="84" height="7" rx="3"/>
+    <rect x="222" y="180" width="50" height="7" rx="3"/>
+
+    <g transform="translate(22 144)" opacity="0.9">
       <line x1="0" y1="0" x2="0" y2="-12"/>
-      <line x1="6" y1="0" x2="6" y2="-22"/>
-      <line x1="12" y1="0" x2="12" y2="-8"/>
-      <line x1="18" y1="0" x2="18" y2="-30"/>
-      <line x1="24" y1="0" x2="24" y2="-14"/>
-      <line x1="30" y1="0" x2="30" y2="-26"/>
-      <line x1="36" y1="0" x2="36" y2="-10"/>
-      <line x1="42" y1="0" x2="42" y2="-34"/>
-      <line x1="48" y1="0" x2="48" y2="-20"/>
-      <line x1="54" y1="0" x2="54" y2="-12"/>
-      <line x1="60" y1="0" x2="60" y2="-28"/>
-      <line x1="66" y1="0" x2="66" y2="-8"/>
-      <line x1="72" y1="0" x2="72" y2="-22"/>
-      <line x1="78" y1="0" x2="78" y2="-34"/>
-      <line x1="84" y1="0" x2="84" y2="-18"/>
-      <line x1="90" y1="0" x2="90" y2="-10"/>
-      <line x1="96" y1="0" x2="96" y2="-26"/>
-      <line x1="102" y1="0" x2="102" y2="-14"/>
-      <line x1="108" y1="0" x2="108" y2="-22"/>
-      <line x1="114" y1="0" x2="114" y2="-30"/>
-      <line x1="120" y1="0" x2="120" y2="-12"/>
-      <line x1="126" y1="0" x2="126" y2="-26"/>
-      <line x1="132" y1="0" x2="132" y2="-8"/>
-      <line x1="138" y1="0" x2="138" y2="-30"/>
-      <line x1="144" y1="0" x2="144" y2="-16"/>
-      <line x1="150" y1="0" x2="150" y2="-22"/>
-      <line x1="156" y1="0" x2="156" y2="-10"/>
-      <line x1="162" y1="0" x2="162" y2="-32"/>
-      <line x1="168" y1="0" x2="168" y2="-14"/>
-      <line x1="174" y1="0" x2="174" y2="-26"/>
+      <line x1="7" y1="0" x2="7" y2="-22"/>
+      <line x1="14" y1="0" x2="14" y2="-8"/>
+      <line x1="21" y1="0" x2="21" y2="-34"/>
+      <line x1="28" y1="0" x2="28" y2="-16"/>
+      <line x1="35" y1="0" x2="35" y2="-28"/>
+      <line x1="42" y1="0" x2="42" y2="-11"/>
+      <line x1="49" y1="0" x2="49" y2="-38"/>
+      <line x1="56" y1="0" x2="56" y2="-22"/>
+      <line x1="63" y1="0" x2="63" y2="-13"/>
+      <line x1="70" y1="0" x2="70" y2="-30"/>
+      <line x1="77" y1="0" x2="77" y2="-9"/>
+      <line x1="84" y1="0" x2="84" y2="-25"/>
+      <line x1="91" y1="0" x2="91" y2="-36"/>
+      <line x1="98" y1="0" x2="98" y2="-18"/>
+      <line x1="105" y1="0" x2="105" y2="-10"/>
+      <line x1="112" y1="0" x2="112" y2="-29"/>
+      <line x1="119" y1="0" x2="119" y2="-15"/>
+      <line x1="126" y1="0" x2="126" y2="-24"/>
+      <line x1="133" y1="0" x2="133" y2="-33"/>
+      <line x1="140" y1="0" x2="140" y2="-12"/>
+      <line x1="147" y1="0" x2="147" y2="-27"/>
+      <line x1="154" y1="0" x2="154" y2="-8"/>
+      <line x1="161" y1="0" x2="161" y2="-31"/>
+      <line x1="168" y1="0" x2="168" y2="-17"/>
+      <line x1="175" y1="0" x2="175" y2="-24"/>
     </g>
-    <!-- Transcript pseudo-lines -->
-    <g transform="translate(20,170)">
-      <rect x="0" y="0" width="170" height="6" rx="2"/>
-      <rect x="0" y="12" width="140" height="6" rx="2"/>
-      <rect x="0" y="24" width="160" height="6" rx="2"/>
-      <rect x="0" y="36" width="120" height="6" rx="2"/>
+    <g transform="translate(22 171)">
+      <rect x="0" y="0" width="168" height="6" rx="3"/>
+      <rect x="0" y="13" width="136" height="6" rx="3"/>
+      <rect x="0" y="26" width="158" height="6" rx="3"/>
+      <rect x="0" y="39" width="118" height="6" rx="3"/>
     </g>
   </g>
 
-  <!-- ============================================== -->
-  <!-- Footer strip                                   -->
-  <!-- ============================================== -->
   <line x1="40" y1="318" x2="1240" y2="318" stroke="#C5A55A" stroke-width="0.5" opacity="0.5"/>
-
-  <text x="40" y="338"
-        font-family="Georgia, 'Times New Roman', serif"
-        font-size="11"
-        fill="#C5A55A"
-        font-weight="700"
-        letter-spacing="3">MY</text>
+  <text x="40" y="338" font-family="Georgia, 'Times New Roman', serif" font-size="11" font-weight="700" letter-spacing="3" fill="#C5A55A">MY</text>
   <line x1="68" y1="324" x2="68" y2="342" stroke="#C5A55A" stroke-width="0.8"/>
-  <text x="80" y="338"
-        font-family="Calibri, Arial, sans-serif"
-        font-size="10"
-        fill="#A8B0C2"
-        letter-spacing="3">MOHAMED YASSER  ·  SOLUTIONS ARCHITECT</text>
-
-  <text x="1240" y="338"
-        text-anchor="end"
-        font-family="Calibri, Arial, sans-serif"
-        font-size="10"
-        fill="#C5A55A"
-        font-weight="700"
-        letter-spacing="3">APACHE 2.0  ·  CHROME 121+</text>
+  <text x="80" y="338" font-family="Calibri, Arial, sans-serif" font-size="10" letter-spacing="3" fill="#C7CDDB">MOHAMED YASSER  ·  SOLUTIONS ARCHITECT</text>
+  <text x="1240" y="338" text-anchor="end" font-family="Calibri, Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="3" fill="#C5A55A">APACHE 2.0  ·  CHROME 121+</text>
 </svg>
