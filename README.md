@@ -35,7 +35,6 @@
 - [Project layout](#project-layout)
 - [Roadmap](#roadmap)
 - [License](#license)
-- [Author](#author)
 
 ---
 
@@ -269,10 +268,10 @@ barq-minutes-chrome/
 
 ## License
 
-[Apache License 2.0](./LICENSE) © 2026 Mohamed Yasser.
+Released under the [Apache License 2.0](./LICENSE).
 
 ---
 
 <p align="center">
-  <sub><b>MY</b> &nbsp;|&nbsp; Mohamed Yasser &nbsp;·&nbsp; Solutions Architect</sub>
+  <sub><b>Barq Minutes</b> &nbsp;·&nbsp; Local-only meeting notes for Chrome</sub>
 </p>
