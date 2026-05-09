@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" role="img" aria-label="Barq Minutes for Chrome repository banner">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" role="img" aria-label="Barq Minutes for Chrome product banner">
   <title>Barq Minutes for Chrome</title>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
@@ -7,21 +7,18 @@
       <stop offset="0.52" stop-color="#172642"/>
       <stop offset="1" stop-color="#0F1B33"/>
     </linearGradient>
-    <linearGradient id="diamondFill" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#22355D"/>
+    <linearGradient id="badgeFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#213763"/>
       <stop offset="1" stop-color="#0F1B33"/>
     </linearGradient>
-    <linearGradient id="logoShine" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.14"/>
-      <stop offset="0.46" stop-color="#FFFFFF" stop-opacity="0"/>
-      <stop offset="1" stop-color="#C5A55A" stop-opacity="0.10"/>
+    <linearGradient id="badgeGlow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.16"/>
+      <stop offset="0.52" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="1" stop-color="#C5A55A" stop-opacity="0.12"/>
     </linearGradient>
     <pattern id="goldGrid" width="40" height="40" patternUnits="userSpaceOnUse">
       <path d="M 40 0 H 0 V 40" fill="none" stroke="#C5A55A" stroke-width="0.4" opacity="0.18"/>
     </pattern>
-    <clipPath id="diamondClip">
-      <rect x="-64" y="-64" width="128" height="128" transform="rotate(45)"/>
-    </clipPath>
   </defs>
 
   <rect width="1280" height="360" fill="url(#bg)"/>
@@ -33,23 +30,29 @@
   <path d="M624 20 H656 V42 H624 Z" fill="#1B2A4A" stroke="#C5A55A" stroke-width="0.8" opacity="0.96"/>
   <line x1="640" y1="25" x2="640" y2="38" stroke="#C5A55A" stroke-width="1.2" stroke-linecap="round"/>
 
-  <g transform="translate(116 180)">
-    <rect x="-64" y="-64" width="128" height="128" transform="rotate(45)" fill="url(#diamondFill)" stroke="#C5A55A" stroke-width="2"/>
-    <rect x="-54" y="-54" width="108" height="108" transform="rotate(45)" fill="none" stroke="#C5A55A" stroke-width="0.75" opacity="0.78"/>
-    <g clip-path="url(#diamondClip)">
-      <path d="M-90 -16 C-48 -48 14 -56 90 -34 V-90 H-90 Z" fill="url(#logoShine)"/>
-      <path d="M-90 58 C-32 44 34 44 90 18 V90 H-90 Z" fill="#0F1B33" opacity="0.16"/>
+  <g transform="translate(110 180)">
+    <circle cx="0" cy="0" r="86" fill="#0F1B33" opacity="0.34"/>
+    <rect x="-74" y="-74" width="148" height="148" rx="30" fill="url(#badgeFill)" stroke="#C5A55A" stroke-width="2"/>
+    <rect x="-63" y="-63" width="126" height="126" rx="24" fill="none" stroke="#C5A55A" stroke-width="0.75" opacity="0.76"/>
+    <path d="M-74 -22 C-34 -58 30 -60 74 -33 V-74 H-74 Z" fill="url(#badgeGlow)"/>
+    <path d="M-74 54 C-30 36 27 36 74 15 V74 H-74 Z" fill="#0F1B33" opacity="0.16"/>
+
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="-23" y="-45" width="46" height="70" rx="23" stroke="#FFFFFF" stroke-width="6"/>
+      <path d="M-37 -9 C-37 22 -22 40 0 40 C22 40 37 22 37 -9" stroke="#FFFFFF" stroke-width="5"/>
+      <line x1="0" y1="40" x2="0" y2="58" stroke="#FFFFFF" stroke-width="5"/>
+      <line x1="-18" y1="58" x2="18" y2="58" stroke="#FFFFFF" stroke-width="5"/>
+      <path d="M39 -34 C48 -25 48 -12 39 -3" stroke="#C5A55A" stroke-width="4"/>
+      <path d="M52 -47 C67 -31 67 -7 52 10" stroke="#C5A55A" stroke-width="4"/>
+      <path d="M-34 75 H34" stroke="#C5A55A" stroke-width="3" opacity="0.95"/>
+      <path d="M-25 88 H25" stroke="#E6E8EE" stroke-width="3" opacity="0.88"/>
+      <path d="M-17 101 H17" stroke="#C5A55A" stroke-width="3" opacity="0.9"/>
     </g>
-    <g font-family="Georgia, 'Times New Roman', serif" font-weight="700" dominant-baseline="alphabetic">
-      <text x="-45" y="26" font-size="64" fill="#FFFFFF" letter-spacing="-3">M</text>
-      <text x="8" y="26" font-size="64" fill="#C5A55A" letter-spacing="-2">Y</text>
-    </g>
-    <path d="M-36 38 H36" stroke="#C5A55A" stroke-width="1" opacity="0.45"/>
-    <circle cx="0" cy="101" r="3.6" fill="#C5A55A"/>
+    <circle cx="0" cy="119" r="3.6" fill="#C5A55A"/>
   </g>
 
   <g transform="translate(280 0)">
-    <text x="0" y="98" font-family="Georgia, 'Times New Roman', serif" font-size="13" font-weight="600" letter-spacing="6" fill="#C5A55A">M O H A M E D   Y A S S E R</text>
+    <text x="0" y="98" font-family="Georgia, 'Times New Roman', serif" font-size="13" font-weight="600" letter-spacing="6" fill="#C5A55A">B R O W S E R - N A T I V E   M I N U T E S</text>
     <line x1="0" y1="112" x2="100" y2="112" stroke="#C5A55A" stroke-width="1.4" stroke-linecap="round"/>
     <circle cx="108" cy="112" r="2.4" fill="#C5A55A"/>
 
@@ -134,8 +137,8 @@
   </g>
 
   <line x1="40" y1="318" x2="1240" y2="318" stroke="#C5A55A" stroke-width="0.5" opacity="0.5"/>
-  <text x="40" y="338" font-family="Georgia, 'Times New Roman', serif" font-size="11" font-weight="700" letter-spacing="3" fill="#C5A55A">MY</text>
-  <line x1="68" y1="324" x2="68" y2="342" stroke="#C5A55A" stroke-width="0.8"/>
-  <text x="80" y="338" font-family="Calibri, Arial, sans-serif" font-size="10" letter-spacing="3" fill="#C7CDDB">MOHAMED YASSER  ·  SOLUTIONS ARCHITECT</text>
+  <text x="40" y="338" font-family="Georgia, 'Times New Roman', serif" font-size="11" font-weight="700" letter-spacing="2.2" fill="#C5A55A">BARQ MINUTES</text>
+  <line x1="176" y1="324" x2="176" y2="342" stroke="#C5A55A" stroke-width="0.8"/>
+  <text x="190" y="338" font-family="Calibri, Arial, sans-serif" font-size="10" letter-spacing="3" fill="#C7CDDB">LOCAL ON-DEVICE</text>
   <text x="1240" y="338" text-anchor="end" font-family="Calibri, Arial, sans-serif" font-size="10" font-weight="700" letter-spacing="3" fill="#C5A55A">APACHE 2.0  ·  CHROME 121+</text>
 </svg>
