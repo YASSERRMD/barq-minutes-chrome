@@ -4,9 +4,7 @@ import { startLiveTranscriber, type LiveTranscriberHandle } from '../../shared/p
 import { ensureSessions } from '../../shared/models/sessions';
 import { createMeeting, updateMeeting } from '../../shared/storage/meetings';
 import { finalizeRecording } from '../../shared/pipeline/finalize';
-import { processMeeting } from '../../shared/pipeline/processMeeting';
-import { indexMeetingForRag } from '../../shared/pipeline/ragIndex';
-import { getMeeting } from '../../shared/storage/meetings';
+import { runProcessing } from '../../shared/pipeline/runProcessing';
 import { Waveform } from '../components/Waveform';
 import { ProcessingStates } from '../components/ProcessingStates';
 import { ModelStatus } from '../components/ModelStatus';
@@ -101,17 +99,7 @@ export function Record({ onMeetingCreated }: { onMeetingCreated: (id: string) =>
       });
 
       setPhase('processing');
-      await ensureSessions(['llm', 'embedding']);
-      await processMeeting({
-        meetingId,
-        onProgress: (p) => setStatus(p.status),
-      });
-      const m = await getMeeting(meetingId);
-      if (m) {
-        setStatus('indexing');
-        await indexMeetingForRag(meetingId, m.segments);
-        setStatus('ready');
-      }
+      await runProcessing({ meetingId, onStatus: setStatus });
       setPhase('done');
       onMeetingCreated(meetingId);
     } catch (err) {

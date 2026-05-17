@@ -61,6 +61,7 @@ export const MeetingSchema = z.object({
   decisions: z.array(DecisionSchema).default([]),
   actions: z.array(ActionItemSchema).default([]),
   questions: z.array(OpenQuestionSchema).default([]),
+  errorMessage: z.string().optional(),
 });
 export type Meeting = z.infer<typeof MeetingSchema>;
 
