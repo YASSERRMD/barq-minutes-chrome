@@ -26,6 +26,7 @@ export async function loadLLM(onProgress?: ProgressCallback): Promise<unknown> {
     const wantWebGPU = settings.webgpuEnabled && hasWebGPU();
 
     const pipe = await tx.pipeline('text-generation', LLM_MODEL.repo, {
+      revision: LLM_MODEL.revision,
       device: wantWebGPU ? 'webgpu' : 'wasm',
       dtype: 'q4',
       progress_callback: (p: { progress?: number; loaded?: number; total?: number }) => {

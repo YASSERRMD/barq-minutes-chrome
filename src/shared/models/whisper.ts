@@ -23,6 +23,7 @@ export async function loadWhisper(onProgress?: ProgressCallback): Promise<unknow
     const wantWebGPU = settings.webgpuEnabled && hasWebGPU();
 
     const pipe = await tx.pipeline('automatic-speech-recognition', ASR_MODEL.repo, {
+      revision: ASR_MODEL.revision,
       device: wantWebGPU ? 'webgpu' : 'wasm',
       dtype: 'q8',
       progress_callback: (p: { progress?: number; loaded?: number; total?: number }) => {

@@ -24,6 +24,7 @@ export async function loadEmbedder(onProgress?: ProgressCallback): Promise<unkno
     const wantWebGPU = settings.webgpuEnabled && hasWebGPU();
 
     const pipe = await tx.pipeline('feature-extraction', EMBEDDING_MODEL.repo, {
+      revision: EMBEDDING_MODEL.revision,
       device: wantWebGPU ? 'webgpu' : 'wasm',
       dtype: 'q8',
       progress_callback: (p: { loaded?: number; total?: number }) => {
