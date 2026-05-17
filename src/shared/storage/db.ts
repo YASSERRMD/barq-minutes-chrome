@@ -36,25 +36,13 @@ export function openDb(): Promise<IDBDatabase> {
   return dbPromise;
 }
 
-export async function tx<T>(
-  storeNames: string | string[],
-  mode: IDBTransactionMode,
-  run: (tx: IDBTransaction) => Promise<T> | T,
-): Promise<T> {
-  const db = await openDb();
-  return new Promise<T>((resolve, reject) => {
-    const transaction = db.transaction(storeNames, mode);
-    let result: T;
-    Promise.resolve(run(transaction))
-      .then((r) => {
-        result = r;
-      })
-      .catch(reject);
-    transaction.oncomplete = () => resolve(result);
-    transaction.onerror = () => reject(transaction.error);
-    transaction.onabort = () => reject(transaction.error);
-  });
-}
+// NOTE: A generic `tx` helper that accepted `(tx) => Promise<T>` was removed.
+// IndexedDB transactions auto-commit at the next microtask without a pending
+// request, so a generic helper that allowed callers to await arbitrary work
+// inside the transaction would silently commit early and resolve with a stale
+// result. Each store opens its own scoped transaction with synchronous request
+// chains. If you need a helper, make it accept a synchronous request-issuing
+// callback only.
 
 export function reqToPromise<T>(req: IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
