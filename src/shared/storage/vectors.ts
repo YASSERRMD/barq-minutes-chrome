@@ -1,5 +1,17 @@
+import { z } from 'zod';
 import { openDb, reqToPromise, STORE_VECTORS } from './db';
 import { cosineSimilarity } from '../models/embedding';
+
+const StoredRecordSchema = z.object({
+  id: z.string(),
+  meetingId: z.string(),
+  text: z.string(),
+  start: z.number().nonnegative(),
+  end: z.number().nonnegative(),
+  speaker: z.string().optional(),
+  embedding: z.instanceof(ArrayBuffer),
+  dim: z.number().int().positive(),
+});
 
 export interface TranscriptChunkRecord {
   id: string;
@@ -11,16 +23,7 @@ export interface TranscriptChunkRecord {
   embedding: Float32Array;
 }
 
-interface StoredRecord {
-  id: string;
-  meetingId: string;
-  text: string;
-  start: number;
-  end: number;
-  speaker?: string;
-  embedding: ArrayBuffer;
-  dim: number;
-}
+type StoredRecord = z.infer<typeof StoredRecordSchema>;
 
 function toStored(rec: TranscriptChunkRecord): StoredRecord {
   return {
@@ -87,8 +90,13 @@ export async function listMeetingChunks(meetingId: string): Promise<TranscriptCh
   const db = await openDb();
   const t = db.transaction(STORE_VECTORS, 'readonly');
   const idx = t.objectStore(STORE_VECTORS).index('meetingId');
-  const all = (await reqToPromise(idx.getAll(meetingId))) as StoredRecord[];
-  return all.map(fromStored);
+  const raw = (await reqToPromise(idx.getAll(meetingId))) as unknown[];
+  const validated: TranscriptChunkRecord[] = [];
+  for (const item of raw) {
+    const parsed = StoredRecordSchema.safeParse(item);
+    if (parsed.success) validated.push(fromStored(parsed.data));
+  }
+  return validated;
 }
 
 export async function searchTopK(
