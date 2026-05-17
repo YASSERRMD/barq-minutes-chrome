@@ -6,6 +6,7 @@ export interface RecorderEvents {
 
 export interface RecorderHandle {
   stop: () => Promise<{ blob: Blob; durationMs: number; mimeType: string }>;
+  abort: () => void;
   pause: () => void;
   resume: () => void;
   isRecording: () => boolean;
@@ -72,21 +73,58 @@ export async function startMicRecording(events: RecorderEvents = {}): Promise<Re
     levelHandle = requestAnimationFrame(tick);
   }
 
+  let released = false;
+  const releaseResources = () => {
+    if (released) return;
+    released = true;
+    if (levelHandle !== null) cancelAnimationFrame(levelHandle);
+    levelHandle = null;
+    stream.getTracks().forEach((t) => {
+      try {
+        t.stop();
+      } catch {
+        // already stopped
+      }
+    });
+    if (audioContext.state !== 'closed') {
+      audioContext.close().catch(() => undefined);
+    }
+  };
+
   return {
     stop: () =>
       new Promise<{ blob: Blob; durationMs: number; mimeType: string }>((resolve) => {
+        if (released) {
+          resolve({
+            blob: new Blob(chunks, { type: mimeType || 'audio/webm' }),
+            durationMs: performance.now() - startedAt,
+            mimeType: mimeType || 'audio/webm',
+          });
+          return;
+        }
         recorder.onstop = () => {
-          if (levelHandle) cancelAnimationFrame(levelHandle);
-          stream.getTracks().forEach((t) => t.stop());
-          audioContext.close().catch(() => undefined);
+          releaseResources();
           const blob = new Blob(chunks, {
             type: recorder.mimeType || mimeType || 'audio/webm',
           });
           const durationMs = performance.now() - startedAt;
           resolve({ blob, durationMs, mimeType: blob.type });
         };
-        recorder.stop();
+        if (recorder.state !== 'inactive') {
+          recorder.stop();
+        } else {
+          recorder.onstop?.(new Event('stop'));
+        }
       }),
+    abort: () => {
+      // Privacy-critical: release the microphone immediately. Do not emit a blob.
+      try {
+        if (recorder.state !== 'inactive') recorder.stop();
+      } catch {
+        // ignore
+      }
+      releaseResources();
+    },
     pause: () => recorder.state === 'recording' && recorder.pause(),
     resume: () => recorder.state === 'paused' && recorder.resume(),
     isRecording: () => recorder.state === 'recording',
