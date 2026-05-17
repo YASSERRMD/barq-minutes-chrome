@@ -1,14 +1,33 @@
 export const TARGET_SAMPLE_RATE = 16000;
 
+// Shared decoder context. Creating a new AudioContext per blob hits the
+// browser cap (~6 simultaneous) and pays an unnecessary init cost on each
+// upload window. We close+recreate on demand if a previous close raced.
+let sharedDecoderContext: AudioContext | null = null;
+
+function getDecoderContext(): AudioContext {
+  if (sharedDecoderContext && sharedDecoderContext.state !== 'closed') {
+    return sharedDecoderContext;
+  }
+  sharedDecoderContext = new AudioContext({ sampleRate: TARGET_SAMPLE_RATE });
+  return sharedDecoderContext;
+}
+
+export async function disposeDecoderContext(): Promise<void> {
+  const ctx = sharedDecoderContext;
+  sharedDecoderContext = null;
+  if (ctx && ctx.state !== 'closed') {
+    await ctx.close().catch(() => undefined);
+  }
+}
+
 export async function decodeBlobToMono(blob: Blob): Promise<Float32Array> {
   const arrayBuffer = await blob.arrayBuffer();
-  const audioContext = new AudioContext({ sampleRate: TARGET_SAMPLE_RATE });
-  try {
-    const decoded = await audioContext.decodeAudioData(arrayBuffer.slice(0));
-    return downmixToMono16k(decoded, TARGET_SAMPLE_RATE);
-  } finally {
-    audioContext.close().catch(() => undefined);
-  }
+  const audioContext = getDecoderContext();
+  // decodeAudioData can detach its input ArrayBuffer; pass a fresh copy so the
+  // caller-held blob remains decodable in a later call.
+  const decoded = await audioContext.decodeAudioData(arrayBuffer.slice(0));
+  return downmixToMono16k(decoded, TARGET_SAMPLE_RATE);
 }
 
 export function downmixToMono16k(buffer: AudioBuffer, target = TARGET_SAMPLE_RATE): Float32Array {

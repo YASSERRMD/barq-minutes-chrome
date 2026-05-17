@@ -2,6 +2,11 @@ export interface RecorderEvents {
   onChunk?: (chunk: Blob) => void;
   onError?: (err: Error) => void;
   onLevel?: (rms: number) => void;
+  /**
+   * Optional PCM tap. Receives mono Float32 samples at the AudioContext rate
+   * (16 kHz). Frames arrive every ~100ms.
+   */
+  onPcm?: (frame: Float32Array) => void;
 }
 
 export interface RecorderHandle {
@@ -73,12 +78,45 @@ export async function startMicRecording(events: RecorderEvents = {}): Promise<Re
     levelHandle = requestAnimationFrame(tick);
   }
 
+  // Optional PCM tap via AudioWorklet. We only attach when the caller asked
+  // for PCM, so simple recordings (no live ASR) skip the worklet load.
+  let pcmNode: AudioWorkletNode | null = null;
+  if (events.onPcm) {
+    try {
+      const workletUrl = chrome.runtime.getURL('public/audio/pcm-tap.worklet.js');
+      await audioContext.audioWorklet.addModule(workletUrl);
+      pcmNode = new AudioWorkletNode(audioContext, 'pcm-tap');
+      pcmNode.port.onmessage = (event) => {
+        const buffer = event.data as ArrayBuffer;
+        events.onPcm?.(new Float32Array(buffer));
+      };
+      sourceNode.connect(pcmNode);
+      // Worklet must be in the audio graph to run; route through a silent gain.
+      const silent = audioContext.createGain();
+      silent.gain.value = 0;
+      pcmNode.connect(silent).connect(audioContext.destination);
+    } catch (err) {
+      events.onError?.(
+        err instanceof Error ? err : new Error('Failed to attach PCM tap'),
+      );
+    }
+  }
+
   let released = false;
   const releaseResources = () => {
     if (released) return;
     released = true;
     if (levelHandle !== null) cancelAnimationFrame(levelHandle);
     levelHandle = null;
+    if (pcmNode) {
+      try {
+        pcmNode.port.onmessage = null;
+        pcmNode.disconnect();
+      } catch {
+        // ignore
+      }
+      pcmNode = null;
+    }
     stream.getTracks().forEach((t) => {
       try {
         t.stop();

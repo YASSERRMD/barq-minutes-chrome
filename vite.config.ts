@@ -12,11 +12,14 @@ function copyExtensionAssets() {
       const dist = resolve(root, 'dist');
       if (!existsSync(dist)) mkdirSync(dist, { recursive: true });
       copyFileSync(resolve(root, 'manifest.json'), resolve(dist, 'manifest.json'));
-      const iconsSrc = resolve(root, 'public', 'icons');
-      const iconsDst = resolve(dist, 'public', 'icons');
-      if (existsSync(iconsSrc)) {
-        mkdirSync(iconsDst, { recursive: true });
-        cpSync(iconsSrc, iconsDst, { recursive: true });
+      const publicDirs = ['icons', 'audio'];
+      for (const sub of publicDirs) {
+        const src = resolve(root, 'public', sub);
+        const dst = resolve(dist, 'public', sub);
+        if (existsSync(src)) {
+          mkdirSync(dst, { recursive: true });
+          cpSync(src, dst, { recursive: true });
+        }
       }
     },
   };
