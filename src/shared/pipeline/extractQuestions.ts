@@ -35,8 +35,8 @@ export async function extractQuestions(window: TranscriptWindow): Promise<OpenQu
   if (!result) return [];
   return result.questions.map((q) => ({
     id: ulid(),
-    text: q.text.trim(),
-    speaker: q.speaker?.trim() || undefined,
+    text: q.text,
+    speaker: q.speaker,
     ts: window.fromMs,
   }));
 }

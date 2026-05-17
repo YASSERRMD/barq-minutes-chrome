@@ -1,9 +1,7 @@
 import { useRef, useState } from 'react';
 import { runUpload } from '../../shared/pipeline/runUpload';
 import { ensureSessions } from '../../shared/models/sessions';
-import { processMeeting } from '../../shared/pipeline/processMeeting';
-import { indexMeetingForRag } from '../../shared/pipeline/ragIndex';
-import { getMeeting } from '../../shared/storage/meetings';
+import { runProcessing } from '../../shared/pipeline/runProcessing';
 import { isSupportedUploadType } from '../../shared/pipeline/upload';
 import { ModelStatus } from '../components/ModelStatus';
 import { ProcessingStates } from '../components/ProcessingStates';
@@ -52,15 +50,7 @@ export function Upload({ onMeetingCreated }: { onMeetingCreated: (id: string) =>
         },
       });
 
-      await ensureSessions(['llm', 'embedding']);
-      setStatus('extracting');
-      await processMeeting({ meetingId: meeting.id, onProgress: (e) => setStatus(e.status) });
-      const m = await getMeeting(meeting.id);
-      if (m) {
-        setStatus('indexing');
-        await indexMeetingForRag(meeting.id, m.segments);
-      }
-      setStatus('ready');
+      await runProcessing({ meetingId: meeting.id, onStatus: setStatus });
       setPhase('done');
       onMeetingCreated(meeting.id);
     } catch (err) {

@@ -11,8 +11,8 @@ function extractJsonBlock(text: string): string | null {
   let depth = 0;
   let inStr = false;
   let escape = false;
-  let openCh = text[first];
-  let closeCh = openCh === '{' ? '}' : ']';
+  const openCh = text[first];
+  const closeCh = openCh === '{' ? '}' : ']';
   for (let i = first; i < text.length; i++) {
     const ch = text[i];
     if (inStr) {
@@ -38,6 +38,25 @@ export interface JsonRunOptions {
   temperature?: number;
 }
 
+export class JsonRunModelError extends Error {
+  constructor(cause: unknown) {
+    const message = cause instanceof Error ? cause.message : String(cause);
+    super(`Model call failed: ${message}`);
+    this.name = 'JsonRunModelError';
+  }
+}
+
+/**
+ * Run an LLM call expecting JSON output validated by `schema`. Two distinct
+ * failure modes:
+ *   - The model itself errors (network on initial download, OOM, WebGPU
+ *     reset). These throw `JsonRunModelError` so the caller can persist the
+ *     meeting as `status: 'error'` instead of silently producing an empty
+ *     extraction.
+ *   - The model returns text that does not extract or parse against the
+ *     schema. These are retried with the stricter prompt; if the retry also
+ *     fails, returns `null` so the caller can default to `[]`.
+ */
 export async function runJson<T>(
   options: JsonRunOptions,
   schema: z.ZodType<T>,
@@ -46,20 +65,27 @@ export async function runJson<T>(
   if (options.retryPrompt) attempts.push(options.retryPrompt);
 
   for (let i = 0; i < attempts.length; i++) {
+    let out: string;
     try {
-      const out = await generate({
+      out = await generate({
         prompt: attempts[i],
         maxNewTokens: options.maxNewTokens ?? 256,
         temperature: options.temperature ?? 0.1,
       });
-      const block = extractJsonBlock(out);
-      if (!block) continue;
-      const parsed = JSON.parse(block);
-      const validated = schema.safeParse(parsed);
-      if (validated.success) return validated.data;
-    } catch {
-      // continue retrying
+    } catch (err) {
+      // Model error is not recoverable by retrying the prompt; bubble it up.
+      throw new JsonRunModelError(err);
     }
+    const block = extractJsonBlock(out);
+    if (!block) continue;
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(block);
+    } catch {
+      continue;
+    }
+    const validated = schema.safeParse(parsed);
+    if (validated.success) return validated.data;
   }
   return null;
 }

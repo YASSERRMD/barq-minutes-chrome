@@ -61,21 +61,49 @@ export const MeetingSchema = z.object({
   decisions: z.array(DecisionSchema).default([]),
   actions: z.array(ActionItemSchema).default([]),
   questions: z.array(OpenQuestionSchema).default([]),
+  errorMessage: z.string().optional(),
 });
 export type Meeting = z.infer<typeof MeetingSchema>;
 
+// LLM output is trimmed at the schema boundary so post-validation values are
+// already non-empty and clean. Empty-after-trim entries are rejected, not
+// silently passed downstream where they would later violate the canonical
+// DecisionSchema / ActionItemSchema / OpenQuestionSchema during meeting save.
+
+const trimmedRequired = z
+  .string()
+  .transform((s) => s.trim())
+  .refine((s) => s.length > 0, { message: 'must be non-empty after trim' });
+
+const trimmedOptionalNullable = z
+  .union([z.string(), z.null()])
+  .transform((s) => (s == null ? null : s.trim()))
+  .transform((s) => (s && s.length > 0 ? s : null))
+  .optional()
+  .nullable();
+
 export const ExtractionDecisionsResponseSchema = z.object({
-  decisions: z.array(z.object({ text: z.string().min(1), speaker: z.string().optional() })),
+  decisions: z.array(
+    z.object({
+      text: trimmedRequired,
+      speaker: trimmedRequired.optional(),
+    }),
+  ),
 });
 export const ExtractionActionsResponseSchema = z.object({
   actions: z.array(
     z.object({
-      text: z.string().min(1),
-      owner: z.string().nullable().optional(),
-      due: z.string().nullable().optional(),
+      text: trimmedRequired,
+      owner: trimmedOptionalNullable,
+      due: trimmedOptionalNullable,
     }),
   ),
 });
 export const ExtractionQuestionsResponseSchema = z.object({
-  questions: z.array(z.object({ text: z.string().min(1), speaker: z.string().optional() })),
+  questions: z.array(
+    z.object({
+      text: trimmedRequired,
+      speaker: trimmedRequired.optional(),
+    }),
+  ),
 });

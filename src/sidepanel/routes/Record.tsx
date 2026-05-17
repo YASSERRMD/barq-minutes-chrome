@@ -4,9 +4,7 @@ import { startLiveTranscriber, type LiveTranscriberHandle } from '../../shared/p
 import { ensureSessions } from '../../shared/models/sessions';
 import { createMeeting, updateMeeting } from '../../shared/storage/meetings';
 import { finalizeRecording } from '../../shared/pipeline/finalize';
-import { processMeeting } from '../../shared/pipeline/processMeeting';
-import { indexMeetingForRag } from '../../shared/pipeline/ragIndex';
-import { getMeeting } from '../../shared/storage/meetings';
+import { runProcessing } from '../../shared/pipeline/runProcessing';
 import { Waveform } from '../components/Waveform';
 import { ProcessingStates } from '../components/ProcessingStates';
 import { ModelStatus } from '../components/ModelStatus';
@@ -28,11 +26,20 @@ export function Record({ onMeetingCreated }: { onMeetingCreated: (id: string) =>
   const transcriberRef = useRef<LiveTranscriberHandle | null>(null);
   const startedAtRef = useRef<number>(0);
   const tickRef = useRef<number | null>(null);
+  // Synchronous mirror of `segments` state. Live transcribe callbacks push into
+  // here so finalizeRecording sees the latest list even if a setSegments batch
+  // is still queued by React.
+  const segmentsRef = useRef<TranscriptSegment[]>([]);
 
   useEffect(() => {
     return () => {
       if (tickRef.current) clearInterval(tickRef.current);
       transcriberRef.current?.stop();
+      // Privacy: if the user navigates away mid-recording, release the mic
+      // and drop any in-memory audio buffer. Do not persist a partial meeting.
+      recorderRef.current?.abort();
+      transcriberRef.current = null;
+      recorderRef.current = null;
     };
   }, []);
 
@@ -47,8 +54,13 @@ export function Record({ onMeetingCreated }: { onMeetingCreated: (id: string) =>
       await updateMeeting(meeting.id, (m) => ({ ...m, status: 'transcribing' }));
       setStatus('transcribing');
 
+      segmentsRef.current = [];
+      setSegments([]);
       const transcriber = startLiveTranscriber({
-        onSegment: (seg) => setSegments((prev) => [...prev, seg]),
+        onSegment: (seg) => {
+          segmentsRef.current = [...segmentsRef.current, seg];
+          setSegments(segmentsRef.current);
+        },
         onError: (err) => setError(err.message),
       });
       transcriberRef.current = transcriber;
@@ -83,21 +95,11 @@ export function Record({ onMeetingCreated }: { onMeetingCreated: (id: string) =>
         fullBlob: stopped.blob,
         durationMs: stopped.durationMs,
         storeAudio,
-        alreadyTranscribed: segments,
+        alreadyTranscribed: segmentsRef.current,
       });
 
       setPhase('processing');
-      await ensureSessions(['llm', 'embedding']);
-      await processMeeting({
-        meetingId,
-        onProgress: (p) => setStatus(p.status),
-      });
-      const m = await getMeeting(meetingId);
-      if (m) {
-        setStatus('indexing');
-        await indexMeetingForRag(meetingId, m.segments);
-        setStatus('ready');
-      }
+      await runProcessing({ meetingId, onStatus: setStatus });
       setPhase('done');
       onMeetingCreated(meetingId);
     } catch (err) {

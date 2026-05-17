@@ -35,9 +35,9 @@ export async function extractActions(window: TranscriptWindow): Promise<ActionIt
   if (!result) return [];
   return result.actions.map((a) => ({
     id: ulid(),
-    text: a.text.trim(),
-    owner: a.owner?.toString().trim() ?? null,
-    due: a.due?.toString().trim() ?? null,
+    text: a.text,
+    owner: a.owner ?? null,
+    due: a.due ?? null,
     ts: window.fromMs,
   }));
 }
