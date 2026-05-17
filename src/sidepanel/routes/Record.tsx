@@ -66,7 +66,7 @@ export function Record({ onMeetingCreated }: { onMeetingCreated: (id: string) =>
       transcriberRef.current = transcriber;
 
       const handle = await startMicRecording({
-        onChunk: (chunk) => transcriber.pushChunk(chunk),
+        onPcm: (frame) => transcriber.pushPcm(frame),
         onLevel: (rms) => setLevel(rms),
         onError: (err) => setError(err.message),
       });
@@ -88,7 +88,7 @@ export function Record({ onMeetingCreated }: { onMeetingCreated: (id: string) =>
     try {
       const stopped = await recorderRef.current.stop();
       const transcriber = transcriberRef.current;
-      if (transcriber) await transcriber.flushFinal(stopped.durationMs);
+      if (transcriber) await transcriber.flushFinal();
 
       await finalizeRecording({
         meetingId,
