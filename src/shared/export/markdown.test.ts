@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { meetingToMarkdown } from './markdown';
 import type { Meeting } from '../schemas/meeting';
 
@@ -13,6 +14,7 @@ const sampleMeeting: Meeting = {
   segments: [
     { id: 's1', start: 0, end: 5000, text: 'Hello team.' },
     { id: 's2', start: 5000, end: 10000, text: 'Let us start.' },
+    { id: 's3', start: 60000, end: 62000, text: 'Done.' },
   ],
   summary: ['Discussed pricing.', 'Reviewed roadmap.', 'Aligned on timelines.'],
   decisions: [{ id: 'd1', text: 'Ship pricing change next sprint.' }],
@@ -20,32 +22,42 @@ const sampleMeeting: Meeting = {
   questions: [{ id: 'q1', text: 'Will EU tier change?' }],
 };
 
-function assert(condition: boolean, message: string): void {
-  if (!condition) throw new Error(message);
-}
+const TIMESTAMP_REGEX = /\b\d{2}:\d{2}\b/;
 
-export function runExportFormattingTests(): void {
-  const md = meetingToMarkdown(sampleMeeting);
+describe('meetingToMarkdown', () => {
+  it('includes all top-level sections', () => {
+    const md = meetingToMarkdown(sampleMeeting);
+    expect(md).toMatch(/^# Sample meeting/);
+    expect(md).toContain('## Summary');
+    expect(md).toContain('## Decisions');
+    expect(md).toContain('## Action items');
+    expect(md).toContain('## Open questions');
+    expect(md).toContain('## Transcript');
+  });
 
-  assert(md.startsWith('# Sample meeting'), 'title not at top');
-  assert(md.includes('## Summary'), 'summary section missing');
-  assert(md.includes('## Decisions'), 'decisions section missing');
-  assert(md.includes('## Action items'), 'actions section missing');
-  assert(md.includes('## Open questions'), 'questions section missing');
-  assert(md.includes('## Transcript'), 'transcript section missing');
+  it('does not emit timestamps in summary, decisions, actions, or questions', () => {
+    const md = meetingToMarkdown(sampleMeeting);
+    const sections = ['## Summary', '## Decisions', '## Action items', '## Open questions'];
+    for (let i = 0; i < sections.length; i++) {
+      const start = md.indexOf(sections[i]);
+      const nextStart = sections
+        .slice(i + 1)
+        .map((s) => md.indexOf(s))
+        .find((idx) => idx > start);
+      const transcriptStart = md.indexOf('## Transcript');
+      const end = Math.min(
+        ...[nextStart, transcriptStart].filter((n): n is number => typeof n === 'number' && n > start),
+      );
+      const block = md.slice(start, end);
+      expect(block).not.toMatch(TIMESTAMP_REGEX);
+    }
+  });
 
-  const summaryBlock = md.split('## Summary')[1].split('##')[0];
-  assert(!/00:0\d|01:0\d/.test(summaryBlock), 'summary unexpectedly contains timestamps');
-
-  const decisionsBlock = md.split('## Decisions')[1].split('##')[0];
-  assert(!/00:0\d|01:0\d/.test(decisionsBlock), 'decisions unexpectedly contain timestamps');
-
-  const actionsBlock = md.split('## Action items')[1].split('##')[0];
-  assert(!/00:0\d|01:0\d/.test(actionsBlock), 'actions unexpectedly contain timestamps');
-
-  const questionsBlock = md.split('## Open questions')[1].split('##')[0];
-  assert(!/00:0\d|01:0\d/.test(questionsBlock), 'questions unexpectedly contain timestamps');
-
-  const transcriptBlock = md.split('## Transcript')[1];
-  assert(/00:00/.test(transcriptBlock), 'transcript should contain timestamps');
-}
+  it('emits timestamps inside the transcript section', () => {
+    const md = meetingToMarkdown(sampleMeeting);
+    const transcript = md.slice(md.indexOf('## Transcript'));
+    expect(transcript).toMatch(TIMESTAMP_REGEX);
+    expect(transcript).toContain('00:00');
+    expect(transcript).toContain('01:00');
+  });
+});
