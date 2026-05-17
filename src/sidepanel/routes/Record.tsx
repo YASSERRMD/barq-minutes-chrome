@@ -28,11 +28,20 @@ export function Record({ onMeetingCreated }: { onMeetingCreated: (id: string) =>
   const transcriberRef = useRef<LiveTranscriberHandle | null>(null);
   const startedAtRef = useRef<number>(0);
   const tickRef = useRef<number | null>(null);
+  // Synchronous mirror of `segments` state. Live transcribe callbacks push into
+  // here so finalizeRecording sees the latest list even if a setSegments batch
+  // is still queued by React.
+  const segmentsRef = useRef<TranscriptSegment[]>([]);
 
   useEffect(() => {
     return () => {
       if (tickRef.current) clearInterval(tickRef.current);
       transcriberRef.current?.stop();
+      // Privacy: if the user navigates away mid-recording, release the mic
+      // and drop any in-memory audio buffer. Do not persist a partial meeting.
+      recorderRef.current?.abort();
+      transcriberRef.current = null;
+      recorderRef.current = null;
     };
   }, []);
 
@@ -47,8 +56,13 @@ export function Record({ onMeetingCreated }: { onMeetingCreated: (id: string) =>
       await updateMeeting(meeting.id, (m) => ({ ...m, status: 'transcribing' }));
       setStatus('transcribing');
 
+      segmentsRef.current = [];
+      setSegments([]);
       const transcriber = startLiveTranscriber({
-        onSegment: (seg) => setSegments((prev) => [...prev, seg]),
+        onSegment: (seg) => {
+          segmentsRef.current = [...segmentsRef.current, seg];
+          setSegments(segmentsRef.current);
+        },
         onError: (err) => setError(err.message),
       });
       transcriberRef.current = transcriber;
@@ -83,7 +97,7 @@ export function Record({ onMeetingCreated }: { onMeetingCreated: (id: string) =>
         fullBlob: stopped.blob,
         durationMs: stopped.durationMs,
         storeAudio,
-        alreadyTranscribed: segments,
+        alreadyTranscribed: segmentsRef.current,
       });
 
       setPhase('processing');
