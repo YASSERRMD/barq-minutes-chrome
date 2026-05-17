@@ -1,21 +1,22 @@
 import { useEffect, useMemo, useState } from 'react';
-import { listMeetings } from '../../shared/storage/meetings';
+import { listMeetingsDetailed } from '../../shared/storage/meetings';
 import type { Meeting } from '../../shared/schemas/meeting';
 import { formatDate, formatDuration } from '../../shared/utils/time';
 
 export function Dashboard({ onOpenMeeting }: { onOpenMeeting: (id: string) => void }) {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const [invalidCount, setInvalidCount] = useState(0);
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
-    listMeetings()
-      .then((m) => {
-        if (mounted) {
-          setMeetings(m);
-          setLoading(false);
-        }
+    listMeetingsDetailed()
+      .then((result) => {
+        if (!mounted) return;
+        setMeetings(result.meetings);
+        setInvalidCount(result.invalid);
+        setLoading(false);
       })
       .catch(() => {
         if (mounted) setLoading(false);
@@ -49,6 +50,11 @@ export function Dashboard({ onOpenMeeting }: { onOpenMeeting: (id: string) => vo
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
+      {invalidCount > 0 && (
+        <p className="muted" style={{ fontSize: 12 }}>
+          {invalidCount} meeting record{invalidCount === 1 ? '' : 's'} could not be loaded.
+        </p>
+      )}
       {loading ? (
         <p className="muted">Loading meetings...</p>
       ) : filtered.length === 0 ? (
