@@ -11,7 +11,11 @@ export async function getSettings(): Promise<Settings> {
     | undefined;
   if (!rec) return DEFAULT_SETTINGS;
   const parsed = SettingsSchema.safeParse(rec.value);
-  return parsed.success ? parsed.data : DEFAULT_SETTINGS;
+  if (parsed.success) return parsed.data;
+  // Malformed settings row. Repair it so the next read doesn't pay the parse
+  // cost again. Fire-and-forget; the caller has already received DEFAULT.
+  void saveSettings(DEFAULT_SETTINGS);
+  return DEFAULT_SETTINGS;
 }
 
 export async function saveSettings(value: Partial<Settings>): Promise<Settings> {

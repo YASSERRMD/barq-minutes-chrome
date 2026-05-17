@@ -39,15 +39,30 @@ export async function getMeeting(id: string): Promise<Meeting | undefined> {
   return MeetingSchema.parse(value);
 }
 
-export async function listMeetings(): Promise<Meeting[]> {
+export interface ListMeetingsResult {
+  meetings: Meeting[];
+  /** Count of records that failed schema validation and were skipped. */
+  invalid: number;
+}
+
+export async function listMeetingsDetailed(): Promise<ListMeetingsResult> {
   const db = await openDb();
   const t = db.transaction(STORE_MEETINGS, 'readonly');
   const all = (await reqToPromise(t.objectStore(STORE_MEETINGS).getAll())) as unknown[];
-  return all
-    .map((m) => MeetingSchema.safeParse(m))
-    .filter((p): p is { success: true; data: Meeting } => p.success)
-    .map((p) => p.data)
-    .sort((a, b) => b.updatedAt - a.updatedAt);
+  let invalid = 0;
+  const meetings: Meeting[] = [];
+  for (const m of all) {
+    const parsed = MeetingSchema.safeParse(m);
+    if (parsed.success) meetings.push(parsed.data);
+    else invalid += 1;
+  }
+  meetings.sort((a, b) => b.updatedAt - a.updatedAt);
+  return { meetings, invalid };
+}
+
+export async function listMeetings(): Promise<Meeting[]> {
+  const result = await listMeetingsDetailed();
+  return result.meetings;
 }
 
 export async function updateMeeting(

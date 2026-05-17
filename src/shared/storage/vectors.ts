@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { openDb, reqToPromise, STORE_VECTORS } from './db';
-import { cosineSimilarity } from '../models/embedding';
+// Stored vectors are L2-normalised at embed time (transformers.js normalize=true)
+// so a plain dot product is equivalent to cosine similarity and skips two sqrts.
+import { dotProductNormalized } from '../models/embedding';
 
 const StoredRecordSchema = z.object({
   id: z.string(),
@@ -105,7 +107,10 @@ export async function searchTopK(
   k = 5,
 ): Promise<Array<TranscriptChunkRecord & { score: number }>> {
   const chunks = await listMeetingChunks(meetingId);
-  const scored = chunks.map((c) => ({ ...c, score: cosineSimilarity(c.embedding, queryEmbedding) }));
+  const scored = chunks.map((c) => ({
+    ...c,
+    score: dotProductNormalized(c.embedding, queryEmbedding),
+  }));
   scored.sort((a, b) => b.score - a.score);
   return scored.slice(0, k);
 }

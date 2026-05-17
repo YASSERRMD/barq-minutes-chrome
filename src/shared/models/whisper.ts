@@ -1,18 +1,11 @@
 import { ASR_MODEL } from './config';
 import { isCached, markCached, type ModelLoadProgress } from './cache';
+import { getTransformers } from './transformers';
+import { getSettings } from '../storage/settings';
 
 type ProgressCallback = (p: ModelLoadProgress) => void;
 
 let pipelinePromise: Promise<unknown> | null = null;
-
-async function loadTransformers() {
-  const mod = await import('@huggingface/transformers');
-  if (mod.env) {
-    mod.env.allowLocalModels = false;
-    mod.env.useBrowserCache = true;
-  }
-  return mod;
-}
 
 export async function loadWhisper(onProgress?: ProgressCallback): Promise<unknown> {
   if (pipelinePromise) return pipelinePromise;
@@ -25,10 +18,12 @@ export async function loadWhisper(onProgress?: ProgressCallback): Promise<unknow
       message: cached ? 'Loading Whisper from cache' : 'Downloading Whisper model',
     });
 
-    const tx = await loadTransformers();
+    const tx = await getTransformers();
+    const settings = await getSettings();
+    const wantWebGPU = settings.webgpuEnabled && hasWebGPU();
 
     const pipe = await tx.pipeline('automatic-speech-recognition', ASR_MODEL.repo, {
-      device: hasWebGPU() ? 'webgpu' : 'wasm',
+      device: wantWebGPU ? 'webgpu' : 'wasm',
       dtype: 'q8',
       progress_callback: (p: { progress?: number; loaded?: number; total?: number }) => {
         onProgress?.({
