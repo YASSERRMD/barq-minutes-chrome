@@ -10,6 +10,7 @@ import { ProcessingStates } from '../components/ProcessingStates';
 import { ModelStatus } from '../components/ModelStatus';
 import type { ProcessingStatus, TranscriptSegment } from '../../shared/schemas/meeting';
 import { formatDuration } from '../../shared/utils/time';
+import { LiveTranscript } from '../components/LiveTranscript';
 
 export function Record({ onMeetingCreated }: { onMeetingCreated: (id: string) => void }) {
   const [phase, setPhase] = useState<'idle' | 'recording' | 'finalizing' | 'processing' | 'done' | 'error'>('idle');
@@ -169,21 +170,7 @@ export function Record({ onMeetingCreated }: { onMeetingCreated: (id: string) =>
         <ProcessingStates status={status} />
       )}
 
-      {segments.length > 0 && (
-        <div className="card">
-          <h3>Live transcript</h3>
-          <div className="stack" style={{ maxHeight: 240, overflowY: 'auto' }}>
-            {segments.map((s) => (
-              <div key={s.id} className="row" style={{ alignItems: 'flex-start' }}>
-                <span className="tag" style={{ minWidth: 56, textAlign: 'center' }}>
-                  {formatDuration(s.start)}
-                </span>
-                <span style={{ marginLeft: 8 }}>{s.text}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {segments.length > 0 && <LiveTranscript segments={segments} />}
     </section>
   );
 }

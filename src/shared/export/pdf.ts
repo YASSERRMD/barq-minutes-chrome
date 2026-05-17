@@ -16,11 +16,18 @@ const MARGIN = 48;
 const LINE_HEIGHT = 16;
 
 function slugify(s: string): string {
-  return s
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 60) || 'meeting';
+  // Keep Unicode characters (Arabic, CJK, etc.) so titles in non-Latin
+  // scripts produce a meaningful filename. Only strip control chars and
+  // filesystem-reserved characters.
+  const cleaned = s
+    .normalize('NFKC')
+    // eslint-disable-next-line no-control-regex
+    .replace(/[\x00-\x1f\x7f]/g, '')
+    .replace(/[\\/:*?"<>|]+/g, '-')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return cleaned.slice(0, 80) || 'meeting';
 }
 
 export async function downloadPdf(meeting: Meeting): Promise<void> {

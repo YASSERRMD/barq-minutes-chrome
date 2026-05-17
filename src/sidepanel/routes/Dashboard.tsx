@@ -66,26 +66,20 @@ export function Dashboard({ onOpenMeeting }: { onOpenMeeting: (id: string) => vo
       ) : (
         <div className="card" style={{ padding: 0 }}>
           {filtered.map((m) => (
-            <div
+            <button
               key={m.id}
+              type="button"
               className="list-row"
-              role="button"
-              tabIndex={0}
               onClick={() => onOpenMeeting(m.id)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') onOpenMeeting(m.id);
-              }}
             >
               <span className="title">{m.title}</span>
               <span className="meta">
                 {formatDate(m.createdAt)} · {formatDuration(m.durationMs)} · {m.source}
               </span>
               {m.summary.length > 0 && (
-                <span className="muted" style={{ marginTop: 4, fontSize: 12 }}>
-                  {m.summary[0]}
-                </span>
+                <span className="muted summary-preview">{m.summary[0]}</span>
               )}
-            </div>
+            </button>
           ))}
         </div>
       )}

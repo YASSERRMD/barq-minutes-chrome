@@ -1,42 +1,32 @@
 /// <reference types="chrome" />
 
+// Lightweight MV3 service worker. We deliberately keep this file dependency-
+// free so it always survives the MV3 module loader; verify-build.mjs parses
+// the compiled output with acorn after every vite build to catch regressions.
+//
+// Side panel: opened via the toolbar popup (Popup.tsx calls
+// chrome.sidePanel.open with a real user gesture). The action has a
+// default_popup in the manifest, so chrome.action.onClicked would never fire
+// here. setPanelBehavior(openPanelOnActionClick) likewise conflicts with a
+// default_popup. Both were dead config and have been removed.
+
 const SIDE_PANEL_PATH = 'index.html';
 
 chrome.runtime.onInstalled.addListener(() => {
+  // Ensure the side panel options are registered so chrome.sidePanel.open
+  // from the popup has a target path to load. Idempotent.
   chrome.sidePanel
-    .setPanelBehavior({ openPanelOnActionClick: true })
+    .setOptions({ path: SIDE_PANEL_PATH, enabled: true })
     .catch(() => undefined);
 });
 
-chrome.action.onClicked.addListener(async (tab) => {
-  if (!tab.windowId) return;
-  try {
-    await chrome.sidePanel.setOptions({
-      path: SIDE_PANEL_PATH,
-      enabled: true,
-    });
-    await chrome.sidePanel.open({ windowId: tab.windowId });
-  } catch {
-    // user gesture required is enforced by Chrome
-  }
-});
-
 type RuntimeMessage =
-  | { type: 'ping' }
-  | { type: 'open-side-panel' };
+  | { type: 'ping' };
 
 chrome.runtime.onMessage.addListener(
-  (message: RuntimeMessage, sender, sendResponse) => {
+  (message: RuntimeMessage, _sender, sendResponse) => {
     if (message?.type === 'ping') {
       sendResponse({ ok: true, ts: Date.now() });
-      return false;
-    }
-    if (message?.type === 'open-side-panel') {
-      const windowId = sender.tab?.windowId;
-      if (typeof windowId === 'number') {
-        chrome.sidePanel.open({ windowId }).catch(() => undefined);
-      }
-      sendResponse({ ok: true });
       return false;
     }
     return false;
