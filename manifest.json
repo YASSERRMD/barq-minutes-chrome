@@ -40,10 +40,5 @@
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
   },
-  "web_accessible_resources": [
-    {
-      "resources": ["public/audio/pcm-tap.worklet.js"],
-      "matches": ["<all_urls>"]
-    }
-  ]
+  "_comment_no_web_accessible_resources": "The PCM tap worklet is loaded by the side panel itself (same origin) via chrome.runtime.getURL, so it does not need to be web_accessible. Declaring it as such would let any web page probe for the extension's installed state by attempting to fetch the URL, a known fingerprinting vector."
 }

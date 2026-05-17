@@ -261,8 +261,6 @@ barq-minutes-chrome/
 
 - Tab-audio capture for browser-based meetings
 - Speaker diarization on top of Whisper segments
-- Multi-meeting search across the local index
-- Encrypted-at-rest IndexedDB option
 
 ---
 
