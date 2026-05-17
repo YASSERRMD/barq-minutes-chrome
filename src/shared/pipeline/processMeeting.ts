@@ -1,7 +1,5 @@
 import { chunkTranscriptForExtraction } from './chunker';
-import { extractDecisions } from './extractDecisions';
-import { extractActions } from './extractActions';
-import { extractQuestions } from './extractQuestions';
+import { extractAllForWindow } from './extractCombined';
 import { dedupeActions, dedupeDecisions, dedupeQuestions } from './dedupe';
 import { summarizeMeeting } from './summary';
 import { getMeeting, updateMeeting } from '../storage/meetings';
@@ -40,14 +38,10 @@ export async function processMeeting(options: ProcessOptions): Promise<Meeting> 
       message: `Extracting window ${i + 1} of ${windows.length}`,
     });
     const w = windows[i];
-    const [d, a, q] = await Promise.all([
-      extractDecisions(w),
-      extractActions(w),
-      extractQuestions(w),
-    ]);
-    allDecisions.push(...d);
-    allActions.push(...a);
-    allQuestions.push(...q);
+    const { decisions, actions, questions } = await extractAllForWindow(w);
+    allDecisions.push(...decisions);
+    allActions.push(...actions);
+    allQuestions.push(...questions);
   }
 
   options.onProgress?.({ status: 'deduplicating', message: 'Deduplicating items' });

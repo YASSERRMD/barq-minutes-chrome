@@ -32,9 +32,12 @@ export async function answerMeetingQuestion(
   meetingId: string,
   question: string,
 ): Promise<RagAnswer> {
-  const sources = await retrieveContext(meetingId, question, 5);
+  const sources = await retrieveContext(meetingId, question, { k: 5 });
   if (sources.length === 0) {
-    return { answer: 'No transcript content has been indexed for this meeting yet.', sources: [] };
+    return {
+      answer: 'Not discussed in this meeting.',
+      sources: [],
+    };
   }
   const prompt = ANSWER_PROMPT
     .replace('{QUESTION}', question.trim())
