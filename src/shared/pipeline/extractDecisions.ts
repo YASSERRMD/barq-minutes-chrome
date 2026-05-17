@@ -34,8 +34,8 @@ export async function extractDecisions(window: TranscriptWindow): Promise<Decisi
   if (!result) return [];
   return result.decisions.map((d) => ({
     id: ulid(),
-    text: d.text.trim(),
-    speaker: d.speaker?.trim() || undefined,
+    text: d.text,
+    speaker: d.speaker,
     ts: window.fromMs,
   }));
 }
