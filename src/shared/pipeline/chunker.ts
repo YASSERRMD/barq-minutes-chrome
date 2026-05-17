@@ -75,7 +75,12 @@ export function chunkTranscriptForExtraction(
     });
 
     if (end >= fullText.length) break;
-    start = Math.max(end - overlapChars, start + 1);
+    // Guarantee real forward progress: advance by at least half the target so
+    // a transcript without sentence boundaries near the window edge cannot
+    // create thousands of nearly-identical windows.
+    const minAdvance = Math.max(1, Math.floor(targetChars / 2));
+    const nextStart = Math.max(end - overlapChars, start + minAdvance);
+    start = nextStart;
   }
 
   return windows;
